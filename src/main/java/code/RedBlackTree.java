@@ -121,13 +121,12 @@ public class RedBlackTree {
                         //case 3: bro is black and bro's right color is black
                         bro.color = Node.RED;
                         bro.left.color = Node.BLACK;
-                        bro.color = Node.RED;
+
                         rotateRight(bro);
                         bro = cur.father.right;
                     }
                     // case 4: bro is black and bro's right is red
                     bro.color = cur.father.color;
-                    bro.right.color = Node.BLACK;
                     cur.father.color = Node.BLACK;
                     bro.right.color = Node.BLACK;
                     rotateLeft(cur.father);
@@ -166,7 +165,65 @@ public class RedBlackTree {
         }
         cur.color = Node.BLACK;
     }
+    private void fixUpAfterDelete1(Node cur){
+        while(cur != root && colorOf(cur) == Node.BLACK){
+            if(cur == cur.father.left){
+                Node bro = cur.father.right;
+                if(colorOf(bro) == Node.RED){
+                    bro.color = Node.BLACK;
+                    bro.father.color = Node.RED;
+                    rotateLeft(bro.father);
+                    bro = cur.father.right;
+                }
 
+                if(colorOf(bro.left) == Node.BLACK && colorOf(bro.right) == Node.BLACK){
+                    bro.color = Node.RED;
+                    cur = cur.father;
+                }else{
+                    if(colorOf(bro.right) == Node.BLACK){
+                        bro.left.color = Node.BLACK;
+                        bro.color = Node.RED;
+                        rotateRight(bro);
+                        bro = cur.father.right;
+                    }
+
+                    bro.color = cur.father.color;
+                    cur.father.color = Node.BLACK;
+                    bro.right.color = Node.BLACK;
+                    rotateLeft(bro.father);
+                    cur = root;
+                }
+
+            }else{
+                Node bro  = cur.father.left;
+                if(colorOf(bro) == Node.RED){
+                    bro.color = Node.BLACK;
+                    cur.father.color = Node.RED;
+                    rotateRight(cur.father);
+                    bro = cur.father.left;
+                }
+
+                if(colorOf(bro.left) == Node.BLACK && colorOf(bro.right) == Node.BLACK){
+                    bro.color = Node.RED;
+                    cur = cur.father;
+                }else{
+                    if(colorOf(bro.left) == Node.BLACK){
+                        bro.right.color = Node.BLACK;
+                        bro.color = Node.RED;
+                        rotateLeft(bro);
+                        bro = cur.father.left;
+                    }
+
+                    bro.color = cur.father.color;
+                    bro.left.color = Node.BLACK;
+                    bro.father.color = Node.BLACK;
+                    rotateRight(bro.father);
+                    cur = root;
+                }
+            }
+        }
+        cur.color = Node.BLACK;
+    }
 
     private void fixUpAfterInsert(Node current) {
         current.color = Node.RED;
@@ -250,6 +307,7 @@ public class RedBlackTree {
         }
         root.color = Node.BLACK;
     }
+
 
 
     private void rotateLeft(Node x) {
