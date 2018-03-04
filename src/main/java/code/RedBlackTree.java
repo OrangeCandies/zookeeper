@@ -41,7 +41,7 @@ public class RedBlackTree {
             }
         }
         size++;
-        fixUpAfterInsert(current);
+        fixUpAfterInsert1(current);
     }
 
     public void remove(int data) {
@@ -78,13 +78,13 @@ public class RedBlackTree {
             }
 
             if (cur.color == Node.BLACK) {
-                fixUpAfterDelete(replace);
+                fixUpAfterDelete1(replace);
             }
         } else if (cur.father == null) {
             root = replace;
         } else {
             if (cur.color == Node.BLACK) {
-                fixUpAfterDelete(cur);
+                fixUpAfterDelete1(cur);
             }
             if (cur.father != null) {
                 if (cur.father.left == cur) {
@@ -160,6 +160,66 @@ public class RedBlackTree {
                     cur = root;
 
 
+                }
+            }
+        }
+        cur.color = Node.BLACK;
+    }
+
+    private void fixUpAfterDelete2(Node cur){
+        while(cur != root && colorOf(cur) == Node.BLACK){
+
+            if(cur == cur.father.left){
+                Node bro = cur.father.right;
+                if(colorOf(bro) == Node.RED){
+                    cur.father.color = Node.RED;
+                    bro.color = Node.BLACK;
+                    rotateLeft(cur.father);
+                    bro = cur.father.right;
+                }
+
+                if(colorOf(bro.left) == Node.BLACK && colorOf(bro.right) == Node.BLACK){
+                    bro.color = Node.RED;
+                    cur = cur.father;
+                }else{
+                    if(colorOf(bro.right) == Node.BLACK){
+                        bro.left.color = Node.BLACK;
+                        bro.color = Node.RED;
+                        rotateRight(bro);
+                        bro = cur.father.right;
+                    }
+
+                    bro.right.color = Node.BLACK;
+                    bro.color = cur.father.color;
+                    cur.father.color = Node.BLACK;
+                    rotateLeft(cur.father);
+                    cur = root;
+                }
+            }else{
+                Node bro = cur.father.left;
+                if(colorOf(bro) == Node.RED){
+                    bro.color = Node.BLACK;
+                    bro.father.color = Node.RED;
+                    rotateRight(bro.father);
+                    bro = cur.father.left;
+                }
+
+                if(colorOf(bro.left) == Node.BLACK && colorOf(bro.right) == Node.BLACK){
+                    bro.color = Node.RED;
+                    cur = cur.father;
+                }else {
+                    if(colorOf(bro.left) == Node.BLACK){
+                        bro.right.color = Node.BLACK;
+                        bro.color = Node.RED;
+                        rotateLeft(bro);
+                        bro = cur.father.left;
+                    }
+
+                    bro.color = cur.father.color;
+                    bro.left.color = Node.BLACK;
+                    bro.father.color = Node.BLACK;
+                    rotateRight(cur.father);
+                    cur = root;
                 }
             }
         }
@@ -267,6 +327,47 @@ public class RedBlackTree {
         root.color = Node.BLACK;
     }
 
+    private void fixUpAfterInsert2(Node cur){
+        cur.color = Node.RED;
+        while(cur != null && cur != root && colorOf(cur.father) == Node.RED){
+            if(cur.father == cur.father.father.left){
+                Node uncle = cur.father.father.right;
+                if( colorOf(uncle) == Node.RED){
+                    cur.father.color = Node.BLACK;
+                    uncle.color = Node.BLACK;
+                    cur.father.father.color = Node.RED;
+                    cur = cur.father.father;
+                }else{
+                    if( cur == cur.father.right){
+                        cur = cur.father;
+                        rotateLeft(cur);
+                    }
+
+                    cur.father.color = Node.BLACK;
+                    cur.father.father.color = Node.RED;
+                    rotateRight(cur.father.father);
+                }
+            }else{
+                Node uncle = cur.father.father.left;
+                if(colorOf(uncle) == Node.RED){
+                    cur.father.color = Node.BLACK;
+                    uncle.color = Node.BLACK;
+                    cur.father.father.color = Node.RED;
+                    cur = cur.father.father;
+                }else{
+                    if(cur == cur.father.left){
+                        cur = cur.father;
+                        rotateRight(cur);
+                    }
+
+                    cur.father.color =  Node.BLACK;
+                    cur.father.father.color = Node.RED;
+                    rotateLeft(cur.father.father);
+                }
+            }
+        }
+        root.color = Node.BLACK;
+    }
 
     private void fixUpAfterInsert1(Node cur) {
         cur.color = Node.RED;
