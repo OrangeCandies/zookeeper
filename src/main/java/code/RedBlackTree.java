@@ -6,6 +6,7 @@ public class RedBlackTree {
 
 
     private Node root = null;
+
     private int size = 0;
 
     RedBlackTree() {
@@ -96,7 +97,6 @@ public class RedBlackTree {
                 cur.father = null;
             }
         }
-
 
     }
 
